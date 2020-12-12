@@ -98,15 +98,20 @@ def draw_setup(screen, font, turn, posdict, disabled):
     font : pygame.font.SysFont
         フォント
     turn : int
-        先攻(1)か後攻(2)か
+        先攻(0)か後攻(1)か
     posdict : dict <- {(int, int): str}
         どの位置にどの色の駒が置かれているかを表す辞書
     disabled : bool
         ボタンを押せない
     '''
-    _text = font.render(('先' if turn == 1 else '後') + '攻の駒の配置を決めてね（↓自分側　↑相手側）',
+    _text1 = font.render(
+        ('先' if turn == 0 else '後') + '攻の駒の配置を決めてね（↓自分側　↑相手側）',
         True, (0, 0, 0))
-    screen.blit(_text, (20, 20))
+    _text2 = font.render(
+        '左クリックで悪いおばけ（赤）、右クリックで良いおばけ（青）を配置するよ',
+        True, (0, 0, 0))
+    screen.blit(_text1, (20, 20))
+    screen.blit(_text2, (20, 50))
     _draw_grid(screen, _MARGIN + _SQUARE_SIZE + (0, _SQUARE_SIZE), 4, 2)
 
     for (x, y), s in posdict.items():
@@ -115,17 +120,19 @@ def draw_setup(screen, font, turn, posdict, disabled):
     _draw_button(screen, font, (500, 530), (80, 50), 'OK', disabled)
 
 
-def on_area(x, y, left, right, top, bottom):
+def on_area(x, y, left, top, w, h):
     '''
     座標 x, y が範囲内にあるか
     -> bool
 
     x, y : int
         対象の座標
-    left, right, top, bottom : int
-        範囲の端の座標
+    left, top : int
+        範囲の左・上端の座標
+    w, h : int
+        範囲の横・縦幅
     '''
-    return left <= x <= right and top <= y <= bottom
+    return left <= x <= left+w and top <= y <= top+h
 
 
 def chcoord(pos):
