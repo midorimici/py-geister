@@ -23,8 +23,6 @@ def _draw_grid(screen, coord, col, row):
     '''
     一辺が _SQUARE_SIZE のマスのグリッドを描く
 
-    Parameters
-    ----------
     screen : pygame.display.set_mode
     coord : tuple <- (int, int)
         左上の座標
@@ -48,8 +46,6 @@ def _draw_piece(screen, color, pos, rev=False):
     '''
     駒を描画する
 
-    Parameters
-    ----------
     screen : pygame.display.set_mode
     color : tuple <- (int, int, int)
         駒の色
@@ -75,8 +71,6 @@ def _draw_button(screen, font, coord, size, text, disabled=True):
     '''
     ボタンを描画する
 
-    Parameters
-    ----------
     screen : pygame.display.set_mode
     font : pygame.font.SysFont
         フォント
@@ -98,24 +92,54 @@ def _draw_button(screen, font, coord, size, text, disabled=True):
     screen.blit(_text, coord + (size-_fsize)/2)
 
 
-def draw_setup(screen, font, turn):
+def draw_setup(screen, font, turn, posdict, disabled):
     '''
-    Parameters
-    ----------
     screen : pygame.display.set_mode
     font : pygame.font.SysFont
         フォント
     turn : int
         先攻(1)か後攻(2)か
+    posdict : dict <- {(int, int): str}
+        どの位置にどの色の駒が置かれているかを表す辞書
+    disabled : bool
+        ボタンを押せない
     '''
     _text = font.render(('先' if turn == 1 else '後') + '攻の駒の配置を決めてね（↓自分側　↑相手側）',
         True, (0, 0, 0))
     screen.blit(_text, (20, 20))
-    _draw_grid(screen, _MARGIN + _SQUARE_SIZE, 4, 2)
+    _draw_grid(screen, _MARGIN + _SQUARE_SIZE + (0, _SQUARE_SIZE), 4, 2)
 
-    for i in range(4):
-        _draw_piece(screen, _RED, (i+1, 3))
-    for i in range(4):
-        _draw_piece(screen, _BLUE, (i+1, 4))
+    for (x, y), s in posdict.items():
+        _draw_piece(screen, _RED if s == 'R' else _BLUE, (x, y))
 
-    _draw_button(screen, font, (500, 530), (80, 50), 'OK')
+    _draw_button(screen, font, (500, 530), (80, 50), 'OK', disabled)
+
+
+def on_area(x, y, left, right, top, bottom):
+    '''
+    座標 x, y が範囲内にあるか
+    -> bool
+
+    x, y : int
+        対象の座標
+    left, right, top, bottom : int
+        範囲の端の座標
+    '''
+    return left <= x <= right and top <= y <= bottom
+
+
+def chcoord(pos):
+    '''
+    座標 pos がどのマス上にあるかその位置を返す
+    -> tuple <- (int, int)
+    (0, 0)│...│(5, 0)
+    ──────┼───┼──────
+           ...
+    ──────┼───┼──────
+    (5, 0)│...│(5, 5)
+
+    pos : tuple <- (int, int)
+        対象の座標
+    '''
+    return (pos-_MARGIN)//_SQUARE_SIZE
+    
