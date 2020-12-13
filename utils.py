@@ -3,6 +3,7 @@ import numpy as np
 import pygame
 from pygame.locals import *
 
+
 # ウィンドウサイズ
 DISP_SIZE = (600, 600)
 
@@ -120,6 +121,15 @@ def draw_setup(screen, font, turn, posdict, disabled):
     _draw_button(screen, font, (500, 530), (80, 50), 'OK', disabled)
 
 
+def draw_board(screen):
+    '''
+    ゲームボードを描く
+
+    screen : pygame.display.set_mode
+    '''
+    _draw_grid(screen, _MARGIN, 6, 6)
+
+
 def on_area(x, y, left, top, w, h):
     '''
     座標 x, y が範囲内にあるか
@@ -149,4 +159,3 @@ def chcoord(pos):
         対象の座標
     '''
     return (pos-_MARGIN)//_SQUARE_SIZE
-    

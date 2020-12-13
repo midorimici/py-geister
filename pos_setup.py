@@ -1,10 +1,13 @@
+import pygame
+from pygame.locals import *
 import sys
 
-from utils import *
+from utils import IVORY, draw_setup, on_area, chcoord
+from piece import Piece
 
 
-state = 0
-order = [{}, {}]
+_state = 0
+_order = [{}, {}]
 
 
 def _check_color(colors):
@@ -20,26 +23,26 @@ def _check_color(colors):
             == len([s for s in colors if s == 'B']))
 
 
-def main():
-    global order, state
-    pygame.init()
-    # 音声の設定
-    snd = pygame.mixer.Sound
-    select_snd = snd('./sounds/select.wav')
-    decide_snd = snd('./sounds/decide.wav')
-    forbid_snd = snd('./sounds/forbid.wav')
+def _init_board(order1, order2):
+    '''
+    駒の配置から初期盤面を出力
+    -> dict <- {(int, int): obj}
 
-    args = sys.argv
-    _flag = FULLSCREEN if len(args) == 2 and args[1] == 'f' else 0
-    screen = pygame.display.set_mode(DISP_SIZE, _flag)
-    pygame.display.set_caption('Geister')
-    font = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 16)
+    order1, order2 : dict <- {(int, int): str}
+        駒の初期配置. order1 が先攻
+    '''
+    return {**{(x, 3-y): Piece(s, 1) for (x, y), s in order2.items()},
+        **{(x, y+2): Piece(s, 0) for (x, y), s in order1.items()}}
+
+
+def main(screen, font, select_snd, decide_snd, forbid_snd):
+    global _order, _state
 
     while True:
-        satisfied = _check_color(list(order[state].values()))
+        satisfied = _check_color(list(_order[_state].values()))
 
         screen.fill(IVORY)
-        draw_setup(screen, font, state, order[state], not satisfied)
+        draw_setup(screen, font, _state, _order[_state], not satisfied)
         pygame.display.update()
 
         # イベントハンドリング
@@ -58,14 +61,14 @@ def main():
                     for i in range(1, 5):
                         for j in range(2, 4):
                             if _square_pos == (i, j):
-                                order[state][(i, j)] = 'R'
                                 select_snd.play()
+                                _order[_state][(i, j)] = 'R'
                     
                     if on_area(*_mouse_pos, 500, 530, 80, 50):
                         if satisfied:
-                            if state == 1: return order
-                            state += 1
                             decide_snd.play()
+                            if _state == 1: return _init_board(*_order)
+                            _state += 1
                         else:
                             forbid_snd.play()
                 # 右
@@ -76,8 +79,8 @@ def main():
                     for i in range(1, 5):
                         for j in range(2, 4):
                             if _square_pos == (i, j):
-                                order[state][(i, j)] = 'B'
                                 select_snd.play()
+                                _order[_state][(i, j)] = 'B'
             # キー
             if event.type == KEYDOWN:
                 # Esc キー
