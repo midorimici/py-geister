@@ -23,6 +23,12 @@ def _check_color(colors):
 def main():
     global order, state
     pygame.init()
+    # 音声の設定
+    snd = pygame.mixer.Sound
+    select_snd = snd('./sounds/select.wav')
+    decide_snd = snd('./sounds/decide.wav')
+    forbid_snd = snd('./sounds/forbid.wav')
+
     args = sys.argv
     _flag = FULLSCREEN if len(args) == 2 and args[1] == 'f' else 0
     screen = pygame.display.set_mode(DISP_SIZE, _flag)
@@ -53,9 +59,15 @@ def main():
                         for j in range(2, 4):
                             if _square_pos == (i, j):
                                 order[state][(i, j)] = 'R'
+                                select_snd.play()
                     
-                    if satisfied and on_area(*_mouse_pos, 500, 530, 80, 50):
-                        state += 1
+                    if on_area(*_mouse_pos, 500, 530, 80, 50):
+                        if satisfied:
+                            if state == 1: return order
+                            state += 1
+                            decide_snd.play()
+                        else:
+                            forbid_snd.play()
                 # 右
                 elif event.button == 3:
                     _mouse_pos = event.pos
@@ -65,6 +77,7 @@ def main():
                         for j in range(2, 4):
                             if _square_pos == (i, j):
                                 order[state][(i, j)] = 'B'
+                                select_snd.play()
             # キー
             if event.type == KEYDOWN:
                 # Esc キー
