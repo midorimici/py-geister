@@ -13,6 +13,7 @@ if __name__ == '__main__':
     select_snd = snd('./sounds/select.wav')
     decide_snd = snd('./sounds/decide.wav')
     forbid_snd = snd('./sounds/forbid.wav')
+    move_snd = snd('./sounds/move.wav')
 
     args = sys.argv
     _flag = FULLSCREEN if len(args) == 2 and args[1] == 'f' else 0

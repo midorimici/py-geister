@@ -20,6 +20,33 @@ _MARGIN = (np.asarray(DISP_SIZE) - 6*_SQUARE_SIZE)/2
 _PIECE_SIZE = 60
 
 
+def _draw_arrow(screen, coord, direction):
+    '''
+    矢印を描く
+
+    screen : pygame.display.set_mode
+    coord : tuple <- (int, int)
+        矢先の座標
+    direction : str <- 'U', 'D'
+        'U' - 上, 'D' - 下
+    '''
+    _coord = np.asarray(coord)
+    if direction == 'D':
+        pygame.draw.line(screen, (0, 0, 0),
+            _coord, _coord + (_PIECE_SIZE/2, -_PIECE_SIZE/2), 2)
+        pygame.draw.line(screen, (0, 0, 0),
+            _coord, _coord - (_PIECE_SIZE/2, _PIECE_SIZE/2), 2)
+        pygame.draw.line(screen, (0, 0, 0),
+            _coord, _coord - (0, _PIECE_SIZE), 2)
+    else:
+        pygame.draw.line(screen, (0, 0, 0),
+            _coord, _coord + (_PIECE_SIZE/2, _PIECE_SIZE/2), 2)
+        pygame.draw.line(screen, (0, 0, 0),
+            _coord, _coord + (-_PIECE_SIZE/2, _PIECE_SIZE/2), 2)
+        pygame.draw.line(screen, (0, 0, 0),
+            _coord, _coord + (0, _PIECE_SIZE), 2)
+
+
 def _draw_grid(screen, coord, col, row):
     '''
     一辺が _SQUARE_SIZE のマスのグリッドを描く
@@ -123,11 +150,20 @@ def draw_setup(screen, font, turn, posdict, disabled):
 
 def draw_board(screen):
     '''
-    ゲームボードを描く
+    ゲームボードと盤面上の駒を描く
 
     screen : pygame.display.set_mode
+    board : dict <- {(int, int): obj}
+        駒の位置とオブジェクト
     '''
+    # グリッド
     _draw_grid(screen, _MARGIN, 6, 6)
+    # 角の矢印
+    _padding = (_SQUARE_SIZE - _PIECE_SIZE)/2
+    _draw_arrow(screen, _MARGIN+(_SQUARE_SIZE/2, _padding), 'U')
+    _draw_arrow(screen, _MARGIN+(11*_SQUARE_SIZE/2, _padding), 'U')
+    _draw_arrow(screen, DISP_SIZE-_MARGIN-(_SQUARE_SIZE/2, _padding), 'D')
+    _draw_arrow(screen, DISP_SIZE-_MARGIN-(11*_SQUARE_SIZE/2, _padding), 'D')
 
 
 def on_area(x, y, left, top, w, h):
