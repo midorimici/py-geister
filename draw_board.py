@@ -4,10 +4,10 @@ import sys
 
 from utils import IVORY, draw_board
 
-def main(screen):
+def main(screen, orders):
     while True:
         screen.fill(IVORY)
-        draw_board(screen)
+        draw_board(screen, orders, 0)
         pygame.display.update()
 
         # イベントハンドリング

@@ -11,6 +11,7 @@ DISP_SIZE = (600, 600)
 IVORY = (240, 227, 206)
 _RED = (200, 0, 0)
 _BLUE = (0, 0, 200)
+_GREY = (150, 150, 150)
 
 # マスの大きさ
 _SQUARE_SIZE = 90
@@ -148,13 +149,15 @@ def draw_setup(screen, font, turn, posdict, disabled):
     _draw_button(screen, font, (500, 530), (80, 50), 'OK', disabled)
 
 
-def draw_board(screen):
+def draw_board(screen, board, turn):
     '''
     ゲームボードと盤面上の駒を描く
 
     screen : pygame.display.set_mode
     board : dict <- {(int, int): obj}
         駒の位置とオブジェクト
+    turn : int <- 0, 1, 2
+        0 - 両方伏せる, 1 - 先攻の駒を開く, 2 - 後攻の駒を開く
     '''
     # グリッド
     _draw_grid(screen, _MARGIN, 6, 6)
@@ -164,6 +167,20 @@ def draw_board(screen):
     _draw_arrow(screen, _MARGIN+(11*_SQUARE_SIZE/2, _padding), 'U')
     _draw_arrow(screen, DISP_SIZE-_MARGIN-(_SQUARE_SIZE/2, _padding), 'D')
     _draw_arrow(screen, DISP_SIZE-_MARGIN-(11*_SQUARE_SIZE/2, _padding), 'D')
+    # 駒
+    for pos, piece in board.items():
+        if turn == 0:
+            _draw_piece(screen, _GREY, pos, True if piece.side == 1 else False)
+        elif turn == 1:
+            if piece.side == 0:
+                _draw_piece(screen, _RED if piece.color == 'R' else _BLUE, pos)
+            else:
+                _draw_piece(screen, _GREY, pos, True)
+        else:
+            if piece.side == 0:
+                _draw_piece(screen, _GREY, pos)
+            else:
+                _draw_piece(screen, _RED if piece.color == 'R' else _BLUE, pos, True)
 
 
 def on_area(x, y, left, top, w, h):

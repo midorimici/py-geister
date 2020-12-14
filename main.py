@@ -22,4 +22,4 @@ if __name__ == '__main__':
     font = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 16)
 
     orders = pos_setup.main(screen, font, select_snd, decide_snd, forbid_snd)
-    draw_board.main(screen)
+    draw_board.main(screen, orders)
