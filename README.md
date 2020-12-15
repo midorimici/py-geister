@@ -26,10 +26,13 @@ pip install pygame
 py main.py
 ```
 
-フルスクリーン起動
+フルスクリーン起動(f), ミュート起動(m)
 
 ```
 py main.py f
+py main.py m
+py main.py f m
+py main.py m f
 ```
 
 <br>
