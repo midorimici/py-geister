@@ -1,27 +1,11 @@
 import numpy as np
-
 import pygame
 from pygame.locals import *
 
-
-# ウィンドウサイズ
-DISP_SIZE = (600, 600)
-
-# 色の設定
-IVORY = (240, 227, 206)
-_RED = (200, 0, 0)
-_BLUE = (0, 0, 200)
-_GREY = (150, 150, 150)
-
-# マスの大きさ
-_SQUARE_SIZE = 90
-# マージン幅
-_MARGIN = (np.asarray(DISP_SIZE) - 6*_SQUARE_SIZE)/2
-# 駒の大きさ
-_PIECE_SIZE = 60
+from config import *
 
 
-def _draw_arrow(screen, coord, direction):
+def _arrow(screen, coord, direction):
     '''
     矢印を描く
 
@@ -34,23 +18,23 @@ def _draw_arrow(screen, coord, direction):
     _coord = np.asarray(coord)
     if direction == 'D':
         pygame.draw.line(screen, (0, 0, 0),
-            _coord, _coord + (_PIECE_SIZE/2, -_PIECE_SIZE/2), 2)
+            _coord, _coord + (PIECE_SIZE/2, -PIECE_SIZE/2), 2)
         pygame.draw.line(screen, (0, 0, 0),
-            _coord, _coord - (_PIECE_SIZE/2, _PIECE_SIZE/2), 2)
+            _coord, _coord - (PIECE_SIZE/2, PIECE_SIZE/2), 2)
         pygame.draw.line(screen, (0, 0, 0),
-            _coord, _coord - (0, _PIECE_SIZE), 2)
+            _coord, _coord - (0, PIECE_SIZE), 2)
     else:
         pygame.draw.line(screen, (0, 0, 0),
-            _coord, _coord + (_PIECE_SIZE/2, _PIECE_SIZE/2), 2)
+            _coord, _coord + (PIECE_SIZE/2, PIECE_SIZE/2), 2)
         pygame.draw.line(screen, (0, 0, 0),
-            _coord, _coord + (-_PIECE_SIZE/2, _PIECE_SIZE/2), 2)
+            _coord, _coord + (-PIECE_SIZE/2, PIECE_SIZE/2), 2)
         pygame.draw.line(screen, (0, 0, 0),
-            _coord, _coord + (0, _PIECE_SIZE), 2)
+            _coord, _coord + (0, PIECE_SIZE), 2)
 
 
-def _draw_grid(screen, coord, col, row):
+def _grid(screen, coord, col, row):
     '''
-    一辺が _SQUARE_SIZE のマスのグリッドを描く
+    一辺が SQUARE_SIZE のマスのグリッドを描く
 
     screen : pygame.display.set_mode
     coord : tuple <- (int, int)
@@ -63,15 +47,15 @@ def _draw_grid(screen, coord, col, row):
     _coord = np.asarray(coord)
     for i in range(row+1):
         pygame.draw.line(screen, (0, 0, 0),
-            _coord + (0, _SQUARE_SIZE*i),
-            _coord + (_SQUARE_SIZE*col, _SQUARE_SIZE*i), 2)
+            _coord + (0, SQUARE_SIZE*i),
+            _coord + (SQUARE_SIZE*col, SQUARE_SIZE*i), 2)
     for i in range(col+1):
         pygame.draw.line(screen, (0, 0, 0),
-            _coord + (_SQUARE_SIZE*i, 0),
-            _coord + (_SQUARE_SIZE*i, _SQUARE_SIZE*row), 2)
+            _coord + (SQUARE_SIZE*i, 0),
+            _coord + (SQUARE_SIZE*i, SQUARE_SIZE*row), 2)
 
 
-def _draw_piece(screen, color, pos, rev=False):
+def _piece(screen, color, pos, rev=False):
     '''
     駒を描画する
 
@@ -83,20 +67,20 @@ def _draw_piece(screen, color, pos, rev=False):
     rev : bool
         上下反転して表示する
     '''
-    _padding = (_SQUARE_SIZE - _PIECE_SIZE)/2
-    _coord = np.asarray(pos)*_SQUARE_SIZE + _MARGIN + _padding
+    _padding = (SQUARE_SIZE - PIECE_SIZE)/2
+    _coord = np.asarray(pos)*SQUARE_SIZE + MARGIN + _padding
     if rev:
         _points = [_coord,
-            _coord + (_PIECE_SIZE, 0),
-            _coord + (_PIECE_SIZE/2, _PIECE_SIZE)]
+            _coord + (PIECE_SIZE, 0),
+            _coord + (PIECE_SIZE/2, PIECE_SIZE)]
     else:
-        _points = [_coord + (0, _PIECE_SIZE),
-            _coord + (_PIECE_SIZE, _PIECE_SIZE),
-            _coord + (_PIECE_SIZE/2, 0)]
+        _points = [_coord + (0, PIECE_SIZE),
+            _coord + (PIECE_SIZE, PIECE_SIZE),
+            _coord + (PIECE_SIZE/2, 0)]
     pygame.draw.polygon(screen, color, _points)
 
 
-def _draw_button(screen, font, coord, size, text, disabled=True):
+def _button(screen, font, coord, size, text, disabled=True):
     '''
     ボタンを描画する
 
@@ -121,7 +105,7 @@ def _draw_button(screen, font, coord, size, text, disabled=True):
     screen.blit(_text, coord + (size-_fsize)/2)
 
 
-def draw_setup(screen, font, turn, posdict, disabled):
+def setup(screen, font, turn, posdict, disabled):
     '''
     screen : pygame.display.set_mode
     font : pygame.font.SysFont
@@ -141,15 +125,15 @@ def draw_setup(screen, font, turn, posdict, disabled):
         True, (0, 0, 0))
     screen.blit(_text1, (20, 20))
     screen.blit(_text2, (20, 50))
-    _draw_grid(screen, _MARGIN + _SQUARE_SIZE + (0, _SQUARE_SIZE), 4, 2)
+    _grid(screen, MARGIN + SQUARE_SIZE + (0, SQUARE_SIZE), 4, 2)
 
     for (x, y), s in posdict.items():
-        _draw_piece(screen, _RED if s == 'R' else _BLUE, (x, y))
+        _piece(screen, RED if s == 'R' else BLUE, (x, y))
 
-    _draw_button(screen, font, (500, 530), (80, 50), 'OK', disabled)
+    _button(screen, font, (500, 530), (80, 50), 'OK', disabled)
 
 
-def draw_board(screen, board, turn):
+def board(screen, board, turn):
     '''
     ゲームボードと盤面上の駒を描く
 
@@ -160,55 +144,26 @@ def draw_board(screen, board, turn):
         0 - 両方伏せる, 1 - 先攻の駒を開く, 2 - 後攻の駒を開く
     '''
     # グリッド
-    _draw_grid(screen, _MARGIN, 6, 6)
+    _grid(screen, MARGIN, 6, 6)
     # 角の矢印
-    _padding = (_SQUARE_SIZE - _PIECE_SIZE)/2
-    _draw_arrow(screen, _MARGIN+(_SQUARE_SIZE/2, _padding), 'U')
-    _draw_arrow(screen, _MARGIN+(11*_SQUARE_SIZE/2, _padding), 'U')
-    _draw_arrow(screen, DISP_SIZE-_MARGIN-(_SQUARE_SIZE/2, _padding), 'D')
-    _draw_arrow(screen, DISP_SIZE-_MARGIN-(11*_SQUARE_SIZE/2, _padding), 'D')
+    _padding = (SQUARE_SIZE - PIECE_SIZE)/2
+    _arrow(screen, MARGIN+(SQUARE_SIZE/2, _padding), 'U')
+    _arrow(screen, MARGIN+(11*SQUARE_SIZE/2, _padding), 'U')
+    _arrow(screen, DISP_SIZE-MARGIN-(SQUARE_SIZE/2, _padding), 'D')
+    _arrow(screen, DISP_SIZE-MARGIN-(11*SQUARE_SIZE/2, _padding), 'D')
     # 駒
     for pos, piece in board.items():
         if turn == 0:
-            _draw_piece(screen, _GREY, pos, True if piece.side == 1 else False)
+            _piece(screen, GREY, pos, True if piece.side == 1 else False)
         elif turn == 1:
             if piece.side == 0:
-                _draw_piece(screen, _RED if piece.color == 'R' else _BLUE, pos)
+                _piece(screen, RED if piece.color == 'R' else BLUE, pos)
             else:
-                _draw_piece(screen, _GREY, pos, True)
+                _piece(screen, GREY, pos, True)
         else:
             if piece.side == 0:
-                _draw_piece(screen, _GREY, pos)
+                _piece(screen, GREY, pos)
             else:
-                _draw_piece(screen, _RED if piece.color == 'R' else _BLUE, pos, True)
+                _piece(screen, RED if piece.color == 'R' else BLUE, pos, True)
 
 
-def on_area(x, y, left, top, w, h):
-    '''
-    座標 x, y が範囲内にあるか
-    -> bool
-
-    x, y : int
-        対象の座標
-    left, top : int
-        範囲の左・上端の座標
-    w, h : int
-        範囲の横・縦幅
-    '''
-    return left <= x <= left+w and top <= y <= top+h
-
-
-def chcoord(pos):
-    '''
-    座標 pos がどのマス上にあるかその位置を返す
-    -> tuple <- (int, int)
-    (0, 0)│...│(5, 0)
-    ──────┼───┼──────
-           ...
-    ──────┼───┼──────
-    (5, 0)│...│(5, 5)
-
-    pos : tuple <- (int, int)
-        対象の座標
-    '''
-    return (pos-_MARGIN)//_SQUARE_SIZE

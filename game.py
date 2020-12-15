@@ -1,13 +1,16 @@
-import pygame
-from pygame.locals import *
 import sys
 
-from utils import IVORY, draw_board
+import pygame
+from pygame.locals import *
+
+from config import IVORY
+import draw
+
 
 def main(screen, orders):
     while True:
         screen.fill(IVORY)
-        draw_board(screen, orders, 0)
+        draw.board(screen, orders, 0)
         pygame.display.update()
 
         # イベントハンドリング

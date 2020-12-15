@@ -1,9 +1,10 @@
-import pygame
-from pygame.locals import *
 import sys
 
-from utils import DISP_SIZE
-import pos_setup, draw_board
+import pygame
+from pygame.locals import *
+
+from config import DISP_SIZE
+import setup, game
 
 
 if __name__ == '__main__':
@@ -21,5 +22,5 @@ if __name__ == '__main__':
     pygame.display.set_caption('Geister')
     font = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 16)
 
-    orders = pos_setup.main(screen, font, select_snd, decide_snd, forbid_snd)
-    draw_board.main(screen, orders)
+    orders = setup.main(screen, font, select_snd, decide_snd, forbid_snd)
+    game.main(screen, orders)

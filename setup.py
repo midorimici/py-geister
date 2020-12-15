@@ -1,8 +1,10 @@
-import pygame
-from pygame.locals import *
 import sys
 
-from utils import IVORY, draw_setup, on_area, chcoord
+import pygame
+from pygame.locals import *
+
+from config import IVORY
+import draw, mouse
 from piece import Piece
 
 
@@ -42,7 +44,7 @@ def main(screen, font, select_snd, decide_snd, forbid_snd):
         satisfied = _check_color(list(_order[_state].values()))
 
         screen.fill(IVORY)
-        draw_setup(screen, font, _state, _order[_state], not satisfied)
+        draw.setup(screen, font, _state, _order[_state], not satisfied)
         pygame.display.update()
 
         # イベントハンドリング
@@ -56,7 +58,7 @@ def main(screen, font, select_snd, decide_snd, forbid_snd):
                 # 左
                 if event.button == 1:
                     _mouse_pos = event.pos
-                    _square_pos = tuple(chcoord(_mouse_pos))
+                    _square_pos = tuple(mouse.chcoord(_mouse_pos))
 
                     for i in range(1, 5):
                         for j in range(2, 4):
@@ -64,7 +66,7 @@ def main(screen, font, select_snd, decide_snd, forbid_snd):
                                 select_snd.play()
                                 _order[_state][(i, j)] = 'R'
                     
-                    if on_area(*_mouse_pos, 500, 530, 80, 50):
+                    if mouse.on_area(*_mouse_pos, 500, 530, 80, 50):
                         if satisfied:
                             decide_snd.play()
                             if _state == 1: return _init_board(*_order)
@@ -74,7 +76,7 @@ def main(screen, font, select_snd, decide_snd, forbid_snd):
                 # 右
                 elif event.button == 3:
                     _mouse_pos = event.pos
-                    _square_pos = tuple(chcoord(_mouse_pos))
+                    _square_pos = tuple(mouse.chcoord(_mouse_pos))
 
                     for i in range(1, 5):
                         for j in range(2, 4):
