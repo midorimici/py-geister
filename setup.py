@@ -8,10 +8,6 @@ import draw, mouse
 from piece import Piece
 
 
-_state = 0
-_order = [{}, {}]
-
-
 def _check_color(colors):
     '''
     駒がすべて配置済みで赤と青が半分ずつあるか
@@ -38,7 +34,12 @@ def _init_board(order1, order2):
 
 
 def main(screen, font, select_snd, decide_snd, forbid_snd):
-    global _order, _state
+    # 配置を決定する側
+    # 0 - 先攻, 1 - 後攻
+    _state = 0
+    # 決定された初期配置
+    # [{(int, int): Piece}]
+    _order = [{}, {}]
 
     while True:
         satisfied = _check_color(list(_order[_state].values()))

@@ -19,18 +19,18 @@ def _arrow(screen, coord, direction):
         'draw._arrow の引数 direction は "U", "D" の値を取ります'
     _coord = np.asarray(coord)
     if direction == 'D':
-        pygame.draw.line(screen, (0, 0, 0),
+        pygame.draw.line(screen, BLACK,
             _coord, _coord + (PIECE_SIZE/2, -PIECE_SIZE/2), 2)
-        pygame.draw.line(screen, (0, 0, 0),
+        pygame.draw.line(screen, BLACK,
             _coord, _coord - (PIECE_SIZE/2, PIECE_SIZE/2), 2)
-        pygame.draw.line(screen, (0, 0, 0),
+        pygame.draw.line(screen, BLACK,
             _coord, _coord - (0, PIECE_SIZE), 2)
     else:
-        pygame.draw.line(screen, (0, 0, 0),
+        pygame.draw.line(screen, BLACK,
             _coord, _coord + (PIECE_SIZE/2, PIECE_SIZE/2), 2)
-        pygame.draw.line(screen, (0, 0, 0),
+        pygame.draw.line(screen, BLACK,
             _coord, _coord + (-PIECE_SIZE/2, PIECE_SIZE/2), 2)
-        pygame.draw.line(screen, (0, 0, 0),
+        pygame.draw.line(screen, BLACK,
             _coord, _coord + (0, PIECE_SIZE), 2)
 
 
@@ -48,11 +48,11 @@ def _grid(screen, coord, col, row):
     '''
     _coord = np.asarray(coord)
     for i in range(row+1):
-        pygame.draw.line(screen, (0, 0, 0),
+        pygame.draw.line(screen, BLACK,
             _coord + (0, SQUARE_SIZE*i),
             _coord + (SQUARE_SIZE*col, SQUARE_SIZE*i), 2)
     for i in range(col+1):
-        pygame.draw.line(screen, (0, 0, 0),
+        pygame.draw.line(screen, BLACK,
             _coord + (SQUARE_SIZE*i, 0),
             _coord + (SQUARE_SIZE*i, SQUARE_SIZE*row), 2)
 
@@ -102,7 +102,7 @@ def _button(screen, font, coord, size, text, disabled=False):
     '''
     _color = (160, 140, 120) if disabled else (200, 180, 160)
     screen.fill(_color, (*coord, *size))
-    _text = font.render(text, True, (0, 0, 0))
+    _text = font.render(text, True, BLACK)
     _fsize = np.asarray(font.size(text))
     screen.blit(_text, coord + (size-_fsize)/2)
 
@@ -122,10 +122,10 @@ def setup(screen, font, turn, posdict, disabled):
     assert turn == 0 or turn == 1, 'draw.setup の引数 turn は 0, 1 の値を取ります'
     _text1 = font.render(
         ('先' if turn == 0 else '後') + '攻の駒の配置を決めてね（↓自分側　↑相手側）',
-        True, (0, 0, 0))
+        True, BLACK)
     _text2 = font.render(
         '左クリックで悪いおばけ（赤）、右クリックで良いおばけ（青）を配置するよ',
-        True, (0, 0, 0))
+        True, BLACK)
     screen.blit(_text1, (20, 20))
     screen.blit(_text2, (20, 50))
     _grid(screen, MARGIN + SQUARE_SIZE + (0, SQUARE_SIZE), 4, 2)
@@ -141,7 +141,7 @@ def board(screen, board, turn):
     ゲームボードと盤面上の駒を描く
 
     screen : pygame.display.set_mode
-    board : dict <- {(int, int): obj}
+    board : dict <- {(int, int): Piece}
         駒の位置とオブジェクト
     turn : int <- 0, 1, 2
         0 - 先攻の駒を開く, 1 - 後攻の駒を開く, 2 - 両方伏せる,
@@ -182,10 +182,30 @@ def confirmation(screen, font, turn):
         0 - 次は先攻, 1 - 次は後攻
     '''
     assert turn == 0 or turn == 1, 'draw.confirmation の引数 turn は 0, 1 の値を取ります'
-    pygame.draw.rect(screen, (255, 255, 255), (*MARGIN, 6*SQUARE_SIZE, 6*SQUARE_SIZE))
+    pygame.draw.rect(screen, WHITE, (*MARGIN, 6*SQUARE_SIZE, 6*SQUARE_SIZE))
     _str1 = ('先' if turn == 0 else '後') + '攻のターンだよ'
     _str2 = '画面をクリックしてね'
-    _text1 = font.render(_str1, True, (0, 0, 0))
-    _text2 = font.render(_str2, True, (0, 0, 0))
+    _text1 = font.render(_str1, True, BLACK)
+    _text2 = font.render(_str2, True, BLACK)
     screen.blit(_text1, DISP_SIZE/2-(len(_str1)*32/2, 32))
     screen.blit(_text2, DISP_SIZE/2-(len(_str2)*32/2, -32))
+
+
+def dest(screen, pos, board):
+    '''
+    駒の行先を円で表示する
+
+    screen : pygame.display.set_mode
+    pos : tuple <- (int, int)
+        盤面上の駒の位置
+    board : dict <- {(int, int): Piece}
+        駒の位置とオブジェクト
+    '''
+    for v in ((0, 1), (0, -1), (1, 0), (-1, 0)):
+        _pos = np.asarray(pos) + v
+        # 自分の駒を除外
+        # and 盤面内に存在する
+        if (not (tuple(_pos) in board and board[tuple(_pos)].side == board[pos].side)
+                and 0 <= _pos[0] <= 5 and 0 <= _pos[1] <= 5):
+            _coord = _pos*SQUARE_SIZE + MARGIN + SQUARE_SIZE/2
+            pygame.draw.circle(screen, LAWNGREEN, [int(c) for c in _coord], int(PIECE_SIZE/2))

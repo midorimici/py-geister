@@ -8,7 +8,10 @@ DISP_SIZE = np.asarray((600, 600))
 IVORY = (240, 227, 206)
 RED = (200, 0, 0)
 BLUE = (0, 0, 200)
+LAWNGREEN = (124, 252, 0)
 GREY = (150, 150, 150)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 # マスの大きさ
 SQUARE_SIZE = 90
