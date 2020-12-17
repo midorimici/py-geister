@@ -15,6 +15,7 @@ if __name__ == '__main__':
     decide_snd = snd('./sounds/decide.wav')
     forbid_snd = snd('./sounds/forbid.wav')
     move_snd = snd('./sounds/move.wav')
+    chturn_snd = snd('./sounds/chturn.wav')
 
     # コマンドライン引数
     args = sys.argv
@@ -27,9 +28,11 @@ if __name__ == '__main__':
         decide_snd.set_volume(0)
         forbid_snd.set_volume(0)
         move_snd.set_volume(0)
+        chturn_snd.set_volume(0)
     
     pygame.display.set_caption('Geister')
     font = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 16)
+    font2 = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 32)
 
     orders = setup.main(screen, font, select_snd, decide_snd, forbid_snd)
-    game.main(screen, orders)
+    game.main(screen, font2, orders)

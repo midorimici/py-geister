@@ -33,7 +33,7 @@ def _init_board(order1, order2):
     order1, order2 : dict <- {(int, int): str}
         駒の初期配置. order1 が先攻
     '''
-    return {**{(x, 3-y): Piece(s, 1) for (x, y), s in order2.items()},
+    return {**{(5-x, 3-y): Piece(s, 1) for (x, y), s in order2.items()},
         **{(x, y+2): Piece(s, 0) for (x, y), s in order1.items()}}
 
 

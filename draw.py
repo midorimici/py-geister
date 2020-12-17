@@ -15,6 +15,8 @@ def _arrow(screen, coord, direction):
     direction : str <- 'U', 'D'
         'U' - 上, 'D' - 下
     '''
+    assert direction == 'U' or direction == 'D',\
+        'draw._arrow の引数 direction は "U", "D" の値を取ります'
     _coord = np.asarray(coord)
     if direction == 'D':
         pygame.draw.line(screen, (0, 0, 0),
@@ -80,7 +82,7 @@ def _piece(screen, color, pos, rev=False):
     pygame.draw.polygon(screen, color, _points)
 
 
-def _button(screen, font, coord, size, text, disabled=True):
+def _button(screen, font, coord, size, text, disabled=False):
     '''
     ボタンを描画する
 
@@ -117,6 +119,7 @@ def setup(screen, font, turn, posdict, disabled):
     disabled : bool
         ボタンを押せない
     '''
+    assert turn == 0 or turn == 1, 'draw.setup の引数 turn は 0, 1 の値を取ります'
     _text1 = font.render(
         ('先' if turn == 0 else '後') + '攻の駒の配置を決めてね（↓自分側　↑相手側）',
         True, (0, 0, 0))
@@ -141,8 +144,9 @@ def board(screen, board, turn):
     board : dict <- {(int, int): obj}
         駒の位置とオブジェクト
     turn : int <- 0, 1, 2
-        0 - 両方伏せる, 1 - 先攻の駒を開く, 2 - 後攻の駒を開く
+        0 - 先攻の駒を開く, 1 - 後攻の駒を開く, 2 - 両方伏せる,
     '''
+    assert turn == 0 or turn == 1 or turn == 2, 'draw.board の引数 turn は 0, 1, 2 の値を取ります'
     # グリッド
     _grid(screen, MARGIN, 6, 6)
     # 角の矢印
@@ -153,17 +157,35 @@ def board(screen, board, turn):
     _arrow(screen, DISP_SIZE-MARGIN-(11*SQUARE_SIZE/2, _padding), 'D')
     # 駒
     for pos, piece in board.items():
-        if turn == 0:
+        if turn == 2:
             _piece(screen, GREY, pos, True if piece.side == 1 else False)
-        elif turn == 1:
+        elif turn == 0:
             if piece.side == 0:
                 _piece(screen, RED if piece.color == 'R' else BLUE, pos)
             else:
                 _piece(screen, GREY, pos, True)
-        else:
+        elif turn == 1:
             if piece.side == 0:
                 _piece(screen, GREY, pos)
             else:
                 _piece(screen, RED if piece.color == 'R' else BLUE, pos, True)
 
 
+def confirmation(screen, font, turn):
+    '''
+    手番交代の確認画面を表示する
+
+    screen : pygame.display.set_mode
+    font : pygame.font.SysFont
+        フォント
+    turn : int <- 0, 1
+        0 - 次は先攻, 1 - 次は後攻
+    '''
+    assert turn == 0 or turn == 1, 'draw.confirmation の引数 turn は 0, 1 の値を取ります'
+    pygame.draw.rect(screen, (255, 255, 255), (*MARGIN, 6*SQUARE_SIZE, 6*SQUARE_SIZE))
+    _str1 = ('先' if turn == 0 else '後') + '攻のターンだよ'
+    _str2 = '画面をクリックしてね'
+    _text1 = font.render(_str1, True, (0, 0, 0))
+    _text2 = font.render(_str2, True, (0, 0, 0))
+    screen.blit(_text1, DISP_SIZE/2-(len(_str1)*32/2, 32))
+    screen.blit(_text2, DISP_SIZE/2-(len(_str2)*32/2, -32))

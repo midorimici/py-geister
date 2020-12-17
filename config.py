@@ -2,7 +2,7 @@
 import numpy as np
 
 # ウィンドウサイズ
-DISP_SIZE = (600, 600)
+DISP_SIZE = np.asarray((600, 600))
 
 # 色の設定
 IVORY = (240, 227, 206)
