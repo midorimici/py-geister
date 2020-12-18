@@ -5,6 +5,29 @@ from pygame.locals import *
 from config import *
 
 
+def _triangle_points(coord, size, rev=False):
+    '''
+    三角形の各頂点を出力
+    -> list <- [(int, int)]
+
+    coord : tuple <- (int, int)
+        中央の頂点の座標
+    size : int
+        三角形のサイズ
+    rev : bool (=False)
+        逆転する
+    '''
+    coord = np.asarray(coord)
+    if rev:
+        return [coord,
+        coord - (-size/2, size),
+        coord - (size/2, size)]
+    else:
+        return [coord,
+            coord + (-size/2, size),
+            coord + (size/2, size)]
+
+
 def _arrow(screen, coord, direction):
     '''
     矢印を描く
@@ -66,23 +89,20 @@ def _piece(screen, color, pos, rev=False):
         駒の色
     pos : tuple <- (int, int)
         盤面上の駒の位置
-    rev : bool
+    rev : bool (=False)
         上下反転して表示する
     '''
     _padding = (SQUARE_SIZE - PIECE_SIZE)/2
-    _coord = np.asarray(pos)*SQUARE_SIZE + MARGIN + _padding
+    _coord = np.asarray(pos)*SQUARE_SIZE + (PIECE_SIZE/2, 0) + MARGIN + _padding
     if rev:
-        _points = [_coord,
-            _coord + (PIECE_SIZE, 0),
-            _coord + (PIECE_SIZE/2, PIECE_SIZE)]
+        _coord += (0, PIECE_SIZE)
+        _points = _triangle_points(_coord, PIECE_SIZE, True)
     else:
-        _points = [_coord + (0, PIECE_SIZE),
-            _coord + (PIECE_SIZE, PIECE_SIZE),
-            _coord + (PIECE_SIZE/2, 0)]
+        _points = _triangle_points(_coord, PIECE_SIZE)
     pygame.draw.polygon(screen, color, _points)
 
 
-def _button(screen, font, coord, size, text, disabled=False):
+def _button(screen, font, coord, size, text, disabled):
     '''
     ボタンを描画する
 
@@ -206,3 +226,27 @@ def dest(screen, pos, board):
         if not (tuple(_pos) in board and board[tuple(_pos)].side == board[pos].side):
             _coord = np.asarray(_pos)*SQUARE_SIZE + MARGIN + SQUARE_SIZE/2
             pygame.draw.circle(screen, LAWNGREEN, [int(c) for c in _coord], int(PIECE_SIZE/2))
+
+
+def taken_pieces(screen, numbers):
+    '''
+    取った駒を盤面の端に描画する
+
+    screen : pygame.display.set_mode
+    numbers : list <- [{'R': int, 'B': int}]
+        色と数の辞書のリスト
+    '''
+    # 先攻が取った駒
+    for i in range(numbers[0]['R']):
+        _coord = (10+i*PIECE_SIZE_SMALL, MARGIN[1]+6*SQUARE_SIZE+10)
+        pygame.draw.polygon(screen, RED, _triangle_points(_coord, PIECE_SIZE_SMALL))
+    for i in range(numbers[0]['B']):
+        _coord = (10+(numbers[0]['R']+i)*PIECE_SIZE_SMALL, MARGIN[1]+6*SQUARE_SIZE+10)
+        pygame.draw.polygon(screen, BLUE, _triangle_points(_coord, PIECE_SIZE_SMALL))
+    # 後攻が取った駒
+    for i in range(numbers[1]['R']):
+        _coord = (10+i*PIECE_SIZE_SMALL, 10)
+        pygame.draw.polygon(screen, RED, _triangle_points(_coord, PIECE_SIZE_SMALL))
+    for i in range(numbers[1]['B']):
+        _coord = (10+(numbers[1]['R']+i)*PIECE_SIZE_SMALL, 10)
+        pygame.draw.polygon(screen, BLUE, _triangle_points(_coord, PIECE_SIZE_SMALL))

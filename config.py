@@ -19,3 +19,5 @@ SQUARE_SIZE = 90
 MARGIN = (np.asarray(DISP_SIZE) - 6*SQUARE_SIZE)/2
 # 駒の大きさ
 PIECE_SIZE = 60
+# 盤面端に表示する駒の大きさ
+PIECE_SIZE_SMALL = 10

@@ -16,6 +16,8 @@ def main(screen, font, orders, move_snd, chturn_snd):
     _next = 0
     # ゲームボード {(int, int): Piece}
     _board = orders
+    # 取った駒 [{'R': int, 'B': int}]
+    _taken_pieces = [{'R': 0, 'B': 0}, {'R': 0, 'B': 0}]
     # マウス選択中の駒の位置
     _selecting_pos = None
     # 動かし終わった
@@ -28,6 +30,7 @@ def main(screen, font, orders, move_snd, chturn_snd):
             draw.confirmation(screen, font, _next)
         elif _selecting_pos is not None:
             draw.dest(screen, _selecting_pos, _board)
+        draw.taken_pieces(screen, _taken_pieces)
         pygame.display.update()
 
         # イベントハンドリング
@@ -45,7 +48,6 @@ def main(screen, font, orders, move_snd, chturn_snd):
                     # 確認画面のクリック
                     if _next == 0 or _next == 1:
                         _next = 2
-                        _move_finished = False
                         continue
                     if _move_finished: continue
                     # 駒
@@ -55,6 +57,9 @@ def main(screen, font, orders, move_snd, chturn_snd):
                         # 行先を選択したとき
                         if (_selecting_pos in _board
                                 and _square_pos in _board[_selecting_pos].covering_squares(_selecting_pos)):
+                            # 行先が相手の駒のとき
+                            if _square_pos in _board and _board[_square_pos].side != _turn:
+                                _taken_pieces[_turn][_board[_square_pos].color] += 1
                             # 駒の移動
                             move_snd.play()
                             _board[_square_pos] = _board[_selecting_pos]
@@ -75,3 +80,4 @@ def main(screen, font, orders, move_snd, chturn_snd):
                         chturn_snd.play()
                         _turn = (_turn+1)%2
                         _next = _turn
+                        _move_finished = False
