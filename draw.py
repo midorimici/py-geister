@@ -197,15 +197,12 @@ def dest(screen, pos, board):
 
     screen : pygame.display.set_mode
     pos : tuple <- (int, int)
-        盤面上の駒の位置
+        駒の位置
     board : dict <- {(int, int): Piece}
         駒の位置とオブジェクト
     '''
-    for v in ((0, 1), (0, -1), (1, 0), (-1, 0)):
-        _pos = np.asarray(pos) + v
+    for _pos in board[pos].covering_squares(pos):
         # 自分の駒を除外
-        # and 盤面内に存在する
-        if (not (tuple(_pos) in board and board[tuple(_pos)].side == board[pos].side)
-                and 0 <= _pos[0] <= 5 and 0 <= _pos[1] <= 5):
-            _coord = _pos*SQUARE_SIZE + MARGIN + SQUARE_SIZE/2
+        if not (tuple(_pos) in board and board[tuple(_pos)].side == board[pos].side):
+            _coord = np.asarray(_pos)*SQUARE_SIZE + MARGIN + SQUARE_SIZE/2
             pygame.draw.circle(screen, LAWNGREEN, [int(c) for c in _coord], int(PIECE_SIZE/2))
