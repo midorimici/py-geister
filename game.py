@@ -48,6 +48,12 @@ def main(screen, font, orders):
                     if _square_pos in _board and _board[_square_pos].side == _turn:
                         _selecting_pos = _square_pos
                     else:
+                        # 行先を選択したとき
+                        if (_selecting_pos in _board
+                                and _square_pos in _board[_selecting_pos].covering_squares(_selecting_pos)):
+                            # 駒の移動
+                            _board[_square_pos] = _board[_selecting_pos]
+                            del _board[_selecting_pos]
                         _selecting_pos = None
             # キー
             if event.type == KEYDOWN:
