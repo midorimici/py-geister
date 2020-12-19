@@ -26,8 +26,19 @@ pip install pygame
 py main.py
 ```
 
-フルスクリーン起動
+フルスクリーン起動(f), ミュート起動(m)
 
 ```
 py main.py f
+py main.py m
+py main.py f m
+py main.py m f
 ```
+
+<br>
+
+# 音声素材について
+
+このゲームの効果音素材は[On-Jin ～音人～](https://on-jin.com/)のものを使用しています。
+
+このリポジトリから音声ファイルを直接ダウンロードして使用しないでください。
