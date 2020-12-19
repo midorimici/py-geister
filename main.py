@@ -32,8 +32,8 @@ if __name__ == '__main__':
         chturn_snd.set_volume(0)
     
     pygame.display.set_caption('Geister')
-    font = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 16)
+    font1 = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 16)
     font2 = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 32)
 
-    orders = setup.main(screen, font, select_snd, decide_snd, forbid_snd)
-    game.main(screen, font2, orders, move_snd, chturn_snd, win_snd)
+    orders = setup.main(screen, font1, select_snd, decide_snd, forbid_snd)
+    game.main(screen, font2, font1, orders, move_snd, chturn_snd, win_snd)

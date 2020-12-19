@@ -37,7 +37,7 @@ def win_req(taken, board, side, moved):
             return True
 
 
-def main(screen, font, orders, move_snd, chturn_snd, win_snd):
+def main(screen, font, font_small, orders, move_snd, chturn_snd, win_snd):
     # ボード描画に渡すパラメータ
     # 0 - 先攻, 1 - 後攻, 2 - 終了後
     _turn = 0
@@ -62,7 +62,7 @@ def main(screen, font, orders, move_snd, chturn_snd, win_snd):
         draw.board(screen, _board, _turn)
         if _next == 0 or _next == 1:
             # 交代確認画面
-            draw.confirmation(screen, font, _next)
+            draw.confirmation(screen, font, font_small, _next)
         elif _selecting_pos is not None:
             # 行先
             draw.dest(screen, _selecting_pos, _board)
