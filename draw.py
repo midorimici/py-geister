@@ -132,7 +132,7 @@ def setup(screen, font, turn, posdict, disabled):
     screen : pygame.display.set_mode
     font : pygame.font.SysFont
         フォント
-    turn : int
+    turn : int <- 0 | 1
         先攻(0)か後攻(1)か
     posdict : dict <- {(int, int): str}
         どの位置にどの色の駒が置かれているかを表す辞書
@@ -163,8 +163,8 @@ def board(screen, board, turn):
     screen : pygame.display.set_mode
     board : dict <- {(int, int): Piece}
         駒の位置とオブジェクト
-    turn : int <- 0, 1, 2
-        0 - 先攻の駒を開く, 1 - 後攻の駒を開く, 2 - 両方伏せる,
+    turn : int <- 0 | 1 | 2
+        0 - 先攻の駒を開く, 1 - 後攻の駒を開く, 2 - 両方開く,
     '''
     assert turn == 0 or turn == 1 or turn == 2, 'draw.board の引数 turn は 0, 1, 2 の値を取ります'
     # グリッド
@@ -178,7 +178,10 @@ def board(screen, board, turn):
     # 駒
     for pos, piece in board.items():
         if turn == 2:
-            _piece(screen, GREY, pos, True if piece.side == 1 else False)
+            if piece.side == 0:
+                _piece(screen, RED if piece.color == 'R' else BLUE, pos)
+            else:
+                _piece(screen, RED if piece.color == 'R' else BLUE, pos, True)
         elif turn == 0:
             if piece.side == 0:
                 _piece(screen, RED if piece.color == 'R' else BLUE, pos)
@@ -198,11 +201,11 @@ def confirmation(screen, font, turn):
     screen : pygame.display.set_mode
     font : pygame.font.SysFont
         フォント
-    turn : int <- 0, 1
+    turn : int <- 0 | 1
         0 - 次は先攻, 1 - 次は後攻
     '''
     assert turn == 0 or turn == 1, 'draw.confirmation の引数 turn は 0, 1 の値を取ります'
-    pygame.draw.rect(screen, WHITE, (*MARGIN, 6*SQUARE_SIZE, 6*SQUARE_SIZE))
+    screen.fill(WHITE, (*MARGIN, 6*SQUARE_SIZE, 6*SQUARE_SIZE))
     _str1 = ('先' if turn == 0 else '後') + '攻のターンだよ'
     _str2 = '画面をクリックしてね'
     _text1 = font.render(_str1, True, BLACK)
@@ -250,3 +253,20 @@ def taken_pieces(screen, numbers):
     for i in range(numbers[1]['B']):
         _coord = (10+(numbers[1]['R']+i)*PIECE_SIZE_SMALL, 10)
         pygame.draw.polygon(screen, BLUE, _triangle_points(_coord, PIECE_SIZE_SMALL))
+
+
+def win_message(screen, font, side):
+    '''
+    勝敗の結果を知らせるメッセージを表示する
+
+    screen : pygame.display.set_mode
+    font : pygame.font.SysFont
+        フォント
+    side : int <- 0 | 1
+    '''
+    assert side == 0 or side == 1, 'draw.win_message の引数 side は 0, 1 の値を取ります'
+    _str = ('先' if side == 0 else '後') + '攻の勝ち！'
+    _text = font.render(_str, True, BLACK)
+    _margin = (DISP_SIZE-(3*SQUARE_SIZE, SQUARE_SIZE))/2
+    screen.fill(WHITE, (*_margin, 3*SQUARE_SIZE, SQUARE_SIZE))
+    screen.blit(_text, DISP_SIZE/2-(len(_str)*32/2, 32/2))

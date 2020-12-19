@@ -16,5 +16,18 @@ class Piece:
         pos : tuple <- (int, int)
             現在の位置
         '''
-        _pos = np.asarray(pos) + [(0, 1), (0, -1), (-1, 0), (1, 0)]
-        return [(x, y) for x, y in _pos if 0 <= x <= 5 and 0 <= y <= 5]
+        pos_ = np.asarray(pos) + [(0, 1), (0, -1), (-1, 0), (1, 0)]
+        dest = [(x, y) for x, y in pos_ if 0 <= x <= 5 and 0 <= y <= 5]
+        if self.color == 'B':
+            if self.side == 0:
+                if pos == (0, 0):
+                    dest += [(0, -1)]
+                if pos == (5, 0):
+                    dest += [(5, -1)]
+            elif self.side == 1:
+                if pos == (0, 5):
+                    dest += [(0, 6)]
+                if pos == (5, 5):
+                    dest += [(5, 6)]
+                
+        return dest

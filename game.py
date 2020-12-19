@@ -7,9 +7,39 @@ from config import IVORY
 import draw, mouse
 
 
-def main(screen, font, orders, move_snd, chturn_snd):
+def win_req(taken, board, side, moved):
+    '''
+    side が勝利条件を満たすか
+    -> bool
+
+    taken : list <- [{'R': int, 'B': int}]
+        取った駒
+    board : dict <- {(int, int): Piece}
+        ゲームボード
+    side : int <- 0 | 1
+        先攻(0), 後攻(1)
+    moved : bool
+        side が今駒を動かしたか
+    '''
+    assert side == 0 or side == 1, 'game.win_req の引数 side は 0, 1 の値を取ります'
+    if not moved:
+        # 赤を4つ取らせた
+        if taken[(side+1)%2]['R'] == 4:
+            return True
+    else:
+        # 青を4つ取った
+        if taken[side]['B'] == 4:
+            return True
+        # 青が盤外に出た
+        if side == 0 and ((0, -1) in board or (5, -1) in board):
+            return True
+        if side == 1 and ((0, 6) in board or (5, 6) in board):
+            return True
+
+
+def main(screen, font, orders, move_snd, chturn_snd, win_snd):
     # ボード描画に渡すパラメータ
-    # 0 - 先攻, 1 - 後攻
+    # 0 - 先攻, 1 - 後攻, 2 - 終了後
     _turn = 0
     # 次の番を確認する画面を表示するときに渡すパラメータ
     # 0 - 先攻, 1 - 後攻, 2 - なし
@@ -22,15 +52,25 @@ def main(screen, font, orders, move_snd, chturn_snd):
     _selecting_pos = None
     # 動かし終わった
     _move_finished = False
+    # 勝者
+    # 0 - 先攻, 1 - 後攻
+    _winner = -1
 
     while True:
         screen.fill(IVORY)
+        # 盤面
         draw.board(screen, _board, _turn)
         if _next == 0 or _next == 1:
+            # 交代確認画面
             draw.confirmation(screen, font, _next)
         elif _selecting_pos is not None:
+            # 行先
             draw.dest(screen, _selecting_pos, _board)
+        # 取られた駒
         draw.taken_pieces(screen, _taken_pieces)
+        # 勝敗
+        if _winner == 0 or _winner == 1:
+            draw.win_message(screen, font, _winner)
         pygame.display.update()
 
         # イベントハンドリング
@@ -66,6 +106,13 @@ def main(screen, font, orders, move_snd, chturn_snd):
                             del _board[_selecting_pos]
                             # 移動完了
                             _move_finished = True
+                            # 勝利判定
+                            if win_req(_taken_pieces, _board, _turn, True):
+                                win_snd.play()
+                                _winner = _turn
+                            if win_req(_taken_pieces, _board, (_turn+1)%2, False):
+                                win_snd.play()
+                                _winner = (_turn+1)%2
                         _selecting_pos = None
             # キー
             if event.type == KEYDOWN:
@@ -75,7 +122,11 @@ def main(screen, font, orders, move_snd, chturn_snd):
                     sys.exit()
                 # Enter キー
                 if event.key == K_RETURN:
-                    if _move_finished:
+                    if _winner == 0 or _winner == 1:
+                        # 開示
+                        _winner = 2
+                        _turn = 2
+                    elif _move_finished:
                         # ターン交代
                         chturn_snd.play()
                         _turn = (_turn+1)%2

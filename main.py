@@ -16,6 +16,7 @@ if __name__ == '__main__':
     forbid_snd = snd('./sounds/forbid.wav')
     move_snd = snd('./sounds/move.wav')
     chturn_snd = snd('./sounds/chturn.wav')
+    win_snd = snd('./sounds/win.wav')
 
     # コマンドライン引数
     args = sys.argv
@@ -35,4 +36,4 @@ if __name__ == '__main__':
     font2 = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 32)
 
     orders = setup.main(screen, font, select_snd, decide_snd, forbid_snd)
-    game.main(screen, font2, orders, move_snd, chturn_snd)
+    game.main(screen, font2, orders, move_snd, chturn_snd, win_snd)

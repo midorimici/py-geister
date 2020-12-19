@@ -24,7 +24,7 @@ def _check_color(colors):
 def _init_board(order1, order2):
     '''
     駒の配置から初期盤面を出力
-    -> dict <- {(int, int): obj}
+    -> dict <- {(int, int): Piece}
 
     order1, order2 : dict <- {(int, int): str}
         駒の初期配置. order1 が先攻
