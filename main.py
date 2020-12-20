@@ -35,5 +35,6 @@ if __name__ == '__main__':
     font1 = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 16)
     font2 = pygame.font.SysFont('hg丸ｺﾞｼｯｸmpro', 32)
 
-    orders = setup.main(screen, font1, select_snd, decide_snd, forbid_snd)
-    game.main(screen, font2, font1, orders, move_snd, chturn_snd, win_snd)
+    while True:
+        orders = setup.main(screen, font1, select_snd, decide_snd, forbid_snd)
+        game.main(screen, font2, font1, orders, move_snd, chturn_snd, win_snd)

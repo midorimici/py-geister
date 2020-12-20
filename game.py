@@ -118,6 +118,7 @@ def main(screen, font, font_small, orders, move_snd, chturn_snd, win_snd):
             if event.type == KEYDOWN:
                 # Esc キー
                 if event.key == K_ESCAPE:
+                    # 終了する
                     pygame.quit()
                     sys.exit()
                 # Space キー
@@ -132,3 +133,8 @@ def main(screen, font, font_small, orders, move_snd, chturn_snd, win_snd):
                         _turn = (_turn+1)%2
                         _next = _turn
                         _move_finished = False
+                # shift + r
+                if event.key == K_r and (pygame.key.get_mods() & KMOD_SHIFT):
+                    # はじめからやりなおす
+                    return
+                
