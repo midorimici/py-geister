@@ -208,13 +208,13 @@ def confirmation(screen, font, font_small, turn):
     screen.fill(WHITE, (*MARGIN, 6*SQUARE_SIZE, 6*SQUARE_SIZE))
     _str1 = ('先' if turn == 0 else '後') + '攻のターンだよ'
     _str2 = '画面をクリックしてね'
-    _str3 = '動かし終わったら Enter キーを押してね'
+    _str3 = '動かし終わったらスペースキーを押してね'
     _text1 = font.render(_str1, True, BLACK)
     _text2 = font.render(_str2, True, BLACK)
     _text3 = font_small.render(_str3, True, BLACK)
     screen.blit(_text1, DISP_SIZE/2-(len(_str1)*32/2, 32))
     screen.blit(_text2, DISP_SIZE/2-(len(_str2)*32/2, -32))
-    screen.blit(_text3, DISP_SIZE/2-(16*10, -32*4))
+    screen.blit(_text3, DISP_SIZE/2-(len(_str3)*16/2, -32*4))
 
 
 def dest(screen, pos, board):

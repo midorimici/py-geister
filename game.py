@@ -120,8 +120,8 @@ def main(screen, font, font_small, orders, move_snd, chturn_snd, win_snd):
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-                # Enter キー
-                if event.key == K_RETURN:
+                # Space キー
+                if event.key == K_SPACE:
                     if _winner == 0 or _winner == 1:
                         # 開示
                         _winner = 2
