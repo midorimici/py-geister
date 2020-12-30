@@ -90,8 +90,8 @@ def main(screen, font, font_small, orders, move_snd, chturn_snd, win_snd):
                         _next = 2
                         continue
                     if _move_finished: continue
-                    # 駒
                     if _square_pos in _board and _board[_square_pos].side == _turn:
+                        # 駒を選択したとき
                         _selecting_pos = _square_pos
                     else:
                         # 行先を選択したとき
@@ -123,7 +123,7 @@ def main(screen, font, font_small, orders, move_snd, chturn_snd, win_snd):
                     sys.exit()
                 # Space キー
                 if event.key == K_SPACE:
-                    if _winner == 0 or _winner == 1:
+                    if _winner >= 0:
                         # 開示
                         _winner = 2
                         _turn = 2
